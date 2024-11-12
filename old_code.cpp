@@ -12,6 +12,8 @@
 using namespace std;
 typedef vector<vector<double>> Matrix;
 
+//MATH
+
 Matrix randomMatrix(int rows, int cols)
 {
     Matrix mat(rows, vector<double>(cols));
@@ -88,6 +90,41 @@ double maxElement(vector<double> vec)
     return max_elem;
 }
 
+// Sigmoid activation function
+double sigmoid(double x)
+{
+    return 1.0 / (1.0 + exp(-x));
+}
+
+// Derivative of sigmoid (for backpropagation)
+double sigmoidDerivative(double x)
+{
+    return x * (1.0 - x); // Assumes x is already passed through sigmoid
+}
+
+double relu(double x)
+{
+    return x > 0 ? x : 0;
+}
+double reluDerivative(double x)
+{
+    return x > 0 ? 1 : 0;
+}
+
+vector<double> softmax(vector<double>& values){
+    double max = *max_element(values.begin(),values.end());
+    double sum = 0.0;
+    vector<double> probs(values.size());
+    for(size_t i = 0; i<values.size(); ++i){
+        probs[i] = exp(values[i]- max);
+        sum += probs[i];
+    }
+    for(auto p: probs) p/=sum;
+    return probs;
+    
+}
+
+//Print matrix values for debu
 void printMatrix(const Matrix matrix, string text = " ")
 {
     cout << text << endl;
@@ -188,26 +225,6 @@ private:
     vector<int> board; // 3x3 Tic-Tac-Toe board represented as a 1D array of size 9
 };
 
-// Sigmoid activation function
-double sigmoid(double x)
-{
-    return 1.0 / (1.0 + exp(-x));
-}
-
-// Derivative of sigmoid (for backpropagation)
-double sigmoidDerivative(double x)
-{
-    return x * (1.0 - x); // Assumes x is already passed through sigmoid
-}
-
-double relu(double x)
-{
-    return x > 0 ? x : 0;
-}
-double reluDerivative(double x)
-{
-    return x > 0 ? 1 : 0;
-}
 
 // Fully connected neural network for Q-learning
 class NeuralNetwork
@@ -254,11 +271,6 @@ public:
             for (int j = 0; j < outputDelta[0].size(); ++j)
                 outputDelta[i][j] *= outputError[i][j];
 
-        // cout<< "Output error " << endl;
-        // printMatrix(outputError);
-
-        // cout<< "Output delta " << endl;
-        // printMatrix(outputDelta);
 
         Matrix hiddenError = matMul(outputDelta, transpose(weightsHiddenOutput));
         Matrix hiddenDelta = applyActivationDerivative(hiddenLayerActivated, reluDerivative);
@@ -430,6 +442,8 @@ private:
     int inputSize, hiddenSize, outputSize;
 };
 
+
+
 // Choose an action using epsilon-greedy
 int chooseAction(NeuralNetwork &nn, const Matrix &state, double epsilon, const vector<int> &availableActions)
 {
@@ -553,7 +567,7 @@ void playAgainstAI(NeuralNetwork &nn)
 
 NeuralNetwork trainNeuralNetwork()
 {
-    srand(time(0)); // Random seed for exploration
+    srand(time(0)); 
 
     // Hyperparameters
     int numEpisodes = 20000;
@@ -621,11 +635,6 @@ NeuralNetwork trainNeuralNetwork()
         if (episode % 100 == 0)
         {
             cout << "Episode: " << episode << " - Epsilon: " << epsilon << endl;
-            // cout<<" weightsInputHidden" << endl;
-            // nn.printNetwork();
-            // Matrix nn_matrix = nn.getInputNetworkMatrix();
-            // cout<<"InputNetworkMatrix "<<endl;
-            // printMatrix(nn_matrix);
         }
     }
 
@@ -635,18 +644,7 @@ NeuralNetwork trainNeuralNetwork()
 
 //policy gradient method
 
-vector<double> softmax(vector<double>& values){
-    double max = *max_element(values.begin(),values.end());
-    double sum = 0.0;
-    vector<double> probs(values.size());
-    for(size_t i = 0; i<values.size(); ++i){
-        probs[i] = exp(values[i]- max);
-        sum += probs[i];
-    }
-    for(auto p: probs) p/=sum;
-    return probs;
-    
-}
+
 
 //Reinforce update training function
 void trainPolicy(NeuralNetwork& nn, const vector<pair<Matrix, int>>& gameHistory, int outcome){
@@ -681,6 +679,8 @@ int sampleAction(vector<double> actions){
     std::discrete_distribution<> dist(actions.begin(), actions.end());
     return dist(gen);
 }
+
+
 
 pair<vector<pair<Matrix,int>>,int> playGame(NeuralNetwork& nn, TicTacToe& game){
     vector<pair<Matrix, int>> gameHistory;
