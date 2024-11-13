@@ -9,6 +9,10 @@
 #include <algorithm>
 #include <random>
 
+
+//This is the old code before being refactored into classes
+
+
 using namespace std;
 typedef vector<vector<double>> Matrix;
 
