@@ -48,7 +48,7 @@ int main(){
     Trainer trainer(0.9, 0.01);
 
     // Train the agent
-    int episodes = 1000;
+    int episodes = 500000;
     trainer.trainPolicyGradient(agent, game, episodes);
 
     cout<<"Printing network: "<<endl;
