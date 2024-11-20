@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <algorithm>
 
+
 #include "MatrixMath.h"
 using namespace std;
 typedef vector<vector<double>> Matrix;
@@ -40,6 +41,18 @@ Matrix matAdd(const Matrix &A, const Matrix &B)
             result[i][j] = A[i][j] + B[i][j];
     return result;
 }
+Matrix matScalarMultiply(const Matrix& matrix, double scalar) {
+    Matrix result(matrix.size(), std::vector<double>(matrix[0].size(), 0.0));
+    
+    for (size_t i = 0; i < matrix.size(); ++i) {
+        for (size_t j = 0; j < matrix[i].size(); ++j) {
+            result[i][j] = matrix[i][j] * scalar;
+        }
+    }
+
+    return result;
+}
+
 
 // Transpose of a matrix
 Matrix transpose(const Matrix &A)
@@ -106,20 +119,25 @@ double reluDerivative(double x)
     return x > 0 ? 1 : 0;
 }
 
-vector<double> softmax(vector<double> &values)
-{
-    double max = *max_element(values.begin(), values.end());
+
+
+vector<double> softmax(vector<double>& inputs) {
+    vector<double> output(inputs.size());
+    double maxInput = *max_element(inputs.begin(), inputs.end());
+
     double sum = 0.0;
-    vector<double> probs(values.size());
-    for (size_t i = 0; i < values.size(); ++i)
-    {
-        probs[i] = exp(values[i] - max);
-        sum += probs[i];
+    for (size_t i = 0; i < inputs.size(); ++i) {
+        output[i] = exp(inputs[i] - maxInput); 
+        sum += output[i];
     }
-    for (auto p : probs)
-        p /= sum;
-    return probs;
+
+    for (double& val : output) {
+        val /= sum;
+    }
+
+    return output;
 }
+
 
 // Print matrix values for debu
 void printMatrix(const Matrix matrix, string text = " ")
@@ -148,9 +166,30 @@ Matrix stateToMatrix(const vector<int> &board)
     return input;
 }
 
+vector<int> matrixToState(const Matrix &board){
+    vector<int> input(9);
+    for (int i = 0; i<9; ++i){
+        input[i] = board[0][i];
+    }
+    return input;
+}
+
 int sampleAction(vector<double> actions){
     random_device rd;
     std::mt19937 gen(rd());
     std::discrete_distribution<> dist(actions.begin(), actions.end());
     return dist(gen);
+}
+
+
+int randomAction(vector<int> actions){
+    static bool seeded = false;
+    if (!seeded){
+        srand(time(nullptr));
+        seeded =true;
+    }
+
+    int randomIndex = std::rand() % actions.size();
+    return actions[randomIndex];
+
 }

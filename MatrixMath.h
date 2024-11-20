@@ -11,6 +11,7 @@ typedef std::vector<std::vector<double>> Matrix;
 Matrix randomMatrix(int rows, int cols);
 Matrix matMul(const Matrix &A, const Matrix &B);
 Matrix matAdd(const Matrix &A, const Matrix &B);
+Matrix matScalarMultiply(const Matrix &A, double scalar);
 Matrix transpose(const Matrix &A);
 
 // Activation functions and their derivatives
@@ -29,5 +30,7 @@ int sampleAction(std::vector<double> actions);
 double maxElement(std::vector<double> vec);
 void printMatrix(const Matrix matrix, std::string text);
 Matrix stateToMatrix(const std::vector<int> &board);
+std::vector<int> matrixToState(const Matrix &board);
+int randomAction(std::vector<int> actions);
 
 #endif // MATRIX_MATH_H

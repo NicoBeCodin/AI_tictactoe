@@ -66,6 +66,30 @@ void NeuralNetwork::backward(const Matrix &input, const Matrix &target)
     biasOutput = matAdd(biasOutput, outputDelta);
 }
 
+// void NeuralNetwork::backward(const Matrix &input, const Matrix &target) {
+//     // Calculate error for the output layer
+//     Matrix outputError = matAdd(outputLayerActivated, matScalarMultiply(target, -1.0));
+//     Matrix outputDelta = outputError; // For softmax + log loss
+
+//     // Backpropagate to the hidden layer
+//     Matrix hiddenError = matMul(outputDelta, transpose(weightsHiddenOutput));
+//     Matrix hiddenDelta = applyActivationDerivative(hiddenLayerActivated, reluDerivative);
+//     for (size_t i = 0; i < hiddenDelta.size(); ++i)
+//         for (size_t j = 0; j < hiddenDelta[0].size(); ++j)
+//             hiddenDelta[i][j] *= hiddenError[i][j];
+
+//     // Update weights and biases with a learning rate
+//     double learningRate = 0.01; // Example learning rate
+//     Matrix inputT = transpose(input);
+
+//     weightsInputHidden = matAdd(weightsInputHidden, matScalarMultiply(matMul(inputT, hiddenDelta), learningRate));
+//     weightsHiddenOutput = matAdd(weightsHiddenOutput, matScalarMultiply(matMul(transpose(hiddenLayerActivated), outputDelta), learningRate));
+
+//     biasHidden = matAdd(biasHidden, matScalarMultiply(hiddenDelta, learningRate));
+//     biasOutput = matAdd(biasOutput, matScalarMultiply(outputDelta, learningRate));
+// }
+
+
 void NeuralNetwork::printNetwork() 
 {
 

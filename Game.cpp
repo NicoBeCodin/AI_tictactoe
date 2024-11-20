@@ -2,6 +2,7 @@
 #include <iostream>
 #include "Game.h"
 using namespace std;
+typedef vector<vector<double>> Matrix;
 
 TicTacToe::TicTacToe()
 {
@@ -35,6 +36,16 @@ vector<int> TicTacToe::getAvailableActions() const
     return actions;
 }
 
+vector<int> TicTacToe::getAvailableActionsState(vector<int>& board_state) const
+{
+    vector<int> actions;
+    for (int i = 0; i < 9; ++i)
+        if (board_state[i] == 0)
+            actions.push_back(i);
+    return actions;
+}
+
+
 // Make a move on the board
 bool TicTacToe::makeMove(int pos, int player)
 {
@@ -43,6 +54,14 @@ bool TicTacToe::makeMove(int pos, int player)
         board[pos] = player;
         return true;
     }
+    return false;
+}
+bool TicTacToe::revertMove(int pos){
+    if (board[pos] !=0) {
+        board[pos]=0;
+        return true;
+    }
+    std::cout<< "Can't revert move!!\n";
     return false;
 }
 
@@ -62,12 +81,48 @@ int TicTacToe::checkWinner() const
     if (board[2] != 0 && board[2] == board[4] && board[2] == board[6])
         return board[2];
 
-    // Check if it's a draw
+    // Check if nobody has won
     for (int i = 0; i < 9; i++)
         if (board[i] == 0)
             return -2; // Game is not finished
 
     return 0; // Draw
+}
+
+int TicTacToe::checkTwoInARow(int player, vector<int> board) {
+    // Define the winning lines on a 3x3 board
+    std::vector<std::vector<int>> winningLines = {
+        {0, 1, 2}, // Row 1
+        {3, 4, 5}, // Row 2
+        {6, 7, 8}, // Row 3
+        {0, 3, 6}, // Column 1
+        {1, 4, 7}, // Column 2
+        {2, 5, 8}, // Column 3
+        {0, 4, 8}, // Diagonal 1
+        {2, 4, 6}  // Diagonal 2
+    };
+    
+    // Check each line to see if there is a "2 in a row" situation
+    for (const auto& line : winningLines) {
+        int countPlayer = 0;
+        int emptyIndex = -1;
+        
+        for (int index : line) {
+            if (board[index] == player) {
+                countPlayer++;
+            } else if (board[index] == 0) {
+                emptyIndex = index;
+            }
+        }
+        
+        // If there are exactly two of the player's marks and one empty cell, return the empty index
+        if (countPlayer == 2 && emptyIndex != -1) {
+            return emptyIndex;
+        }
+    }
+    
+    // Return -1 if no "2 in a row" situation is found
+    return -1;
 }
 
 // Reset the board

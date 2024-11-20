@@ -103,6 +103,36 @@ void Trainer::trainPolicyGradient(Agent& agent, TicTacToe& game, int episodes){
     
 }
 
+void Trainer::trainPolicyGradientTwo(Agent& agent1, Agent& agent2, TicTacToe& game, int episodes) {
+    for (int episode = 0; episode < episodes; ++episode) {
+        game.reset();
+
+        // Alternate which agent starts the game
+        Agent* currentPlayer = (episode % 2 == 0) ? &agent1 : &agent2;
+        Agent* opponent = (currentPlayer == &agent1) ? &agent2 : &agent1;
+
+        // Play the game with both agents
+        auto [gameHistory1, outcome1] = currentPlayer->playGameTwo(game, *opponent);
+        auto [gameHistory2, outcome2] = opponent->playGameTwo(game, *currentPlayer);
+
+        // Calculate rewards (zero-sum: 1 for win, -1 for loss)
+        double reward1 = (outcome1 == 1) ? 1.0 : (outcome1 == -1) ? -1.0 : 0.0;
+        double reward2 = -reward1;
+
+        // Train both agents
+        currentPlayer->trainPolicy(gameHistory1, reward1);
+        opponent->trainPolicy(gameHistory2, reward2);
+
+        // Log progress
+        if (episode % 100 == 0) {
+            std::cout << "Episode: " << episode << std::endl;
+        }
+    }
+
+    std::cout << "Training finished..." << std::endl;
+}
+
+
 void Trainer::playAgainstAI(NeuralNetwork& nn)
 {
     TicTacToe game;
@@ -165,4 +195,64 @@ void Trainer::playAgainstAI(NeuralNetwork& nn)
         // Switch player
         player *= -1;
     }
+}
+
+void Trainer::playAgainstMinimax(){
+    TicTacToe game;
+    NeuralNetwork nn(9,64,9);
+    Agent agent(&nn);
+    std::cout<<"Let's play! I am the minimax algorithm\n";
+    int who_started = 1; //X
+    int player =1; //X
+    game.printBoard();
+    while (true)
+    {
+        if (player == -1)
+        {
+            int move;
+            cout << "Your turn! Enter a move (0-8): ";
+            cin >> move;
+
+            // Ensure the move is valid
+            while (move < 0 || move > 8 || !game.makeMove(move, player))
+            {
+                cout << "Invalid move! Try again (0-8): ";
+                cin >> move;
+            }
+        }
+        else
+        {
+            // minimax turn
+            int robotMove = agent.findBestMove(game, player);
+            if (!game.makeMove(robotMove, player)){
+                cout<<"invalid move!!!\n";
+            }
+
+            cout << "robot chooses position: " << robotMove << endl;
+        }
+
+        game.printBoard();
+
+        // Check for winner
+        int result = game.checkWinner();
+        if (result == 1)
+        {
+            cout << "You (X) won! Congrats!\n";
+            break;
+        }
+        else if (result == -1)
+        {
+            cout << "AI (O) won! Better luck next time.\n";
+            break;
+        }
+        else if (result == 0)
+        {
+            cout << "It's a draw!\n";
+            break;
+        }
+
+        // Switch player
+        player *= -1;
+    }
+
 }

@@ -41,23 +41,26 @@ typedef vector<vector<double>> Matrix;
 
 
 int main(){
-    NeuralNetwork nn(9, 64, 9);
-    nn.printNetwork();  
-    Agent agent(&nn, 0.1);
+    NeuralNetwork nnOne(9, 64, 9);
+    NeuralNetwork nnTwo(9, 64, 9);
+    
+    Agent agentOne(&nnOne, 0.05);
+    Agent agentTwo(&nnTwo, 0.05);
     TicTacToe game;
     Trainer trainer(0.9, 0.01);
 
     // Train the agent
-    int episodes = 500000;
-    trainer.trainPolicyGradient(agent, game, episodes);
+    int episodes = 100000;
+    // trainer.trainPolicyGradientTwo(agentOne,agentTwo, game, episodes);
 
-    cout<<"Printing network: "<<endl;
-    nn.printNetwork();
     // Save the trained model weights
-    nn.saveWeights("trained_weights.txt");
+
+    // nnOne.saveWeights("trained_weights.txt");
+    nnOne.loadWeights("trained_weights.txt");
     
-    
-    trainer.playAgainstAI(nn);
+    // trainer.playAgainstAI(nnOne);
+    // trainer.playAgainstAI(nnTwo);
+    trainer.playAgainstMinimax();
 
     return 0;
 }
