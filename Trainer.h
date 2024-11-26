@@ -12,7 +12,7 @@ public:
     void playAgainstAI(NeuralNetwork& nn);
     void playAgainstMinimax();
 
-    void trainQAgent(QAgent& qAgent, int episodes, double alpha, double gamma);
+    void trainQAgent(QAgent& qAgent, int episodes, double alpha, double gamma, double epsilon_decay, double epsilon_min);
     void playAgainstQAgent(QAgent& qAgent);  
 private:
     double gamma;

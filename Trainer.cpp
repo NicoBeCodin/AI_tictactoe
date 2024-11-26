@@ -258,7 +258,7 @@ void Trainer::playAgainstMinimax()
         player *= -1;
     }
 }
-void Trainer::trainQAgent(QAgent& qAgent, int episodes, double alpha, double gamma) {
+void Trainer::trainQAgent(QAgent& qAgent, int episodes, double alpha, double gamma, double epsilon_decay, double epsilon_min) {
     TicTacToe game;
 
     for (int episode = 0; episode < episodes; ++episode) {
@@ -338,12 +338,12 @@ void Trainer::trainQAgent(QAgent& qAgent, int episodes, double alpha, double gam
             // Switch players
             currentPlayer *= -1;
         }
-        cout<<"game: "<< episode <<"\n";
+
         // Decay epsilon to reduce exploration over time
-        qAgent.decreaseEpsilon(0.9999, 0.05);
+        qAgent.decreaseEpsilon(epsilon_decay, epsilon_min);
         if (episode % 100 == 0){
             cout<<"Episode " << episode << endl;
-            // qAgent.printFirstFiveQTable();
+
         }
     }
 }
