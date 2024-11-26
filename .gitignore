@@ -2,4 +2,5 @@ $ cat .gitignore
 *.o
 *.out
 *.txt
-*~
+
+*~.vscode/
