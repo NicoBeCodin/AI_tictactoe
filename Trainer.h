@@ -11,6 +11,9 @@ public:
     void trainPolicyGradientTwo(Agent& agent1, Agent& agent2, TicTacToe& game, int episodes);
     void playAgainstAI(NeuralNetwork& nn);
     void playAgainstMinimax();
+
+    void trainQAgent(QAgent& qAgent, int episodes, double alpha, double gamma);
+    void playAgainstQAgent(QAgent& qAgent);  
 private:
     double gamma;
     double learningRate;

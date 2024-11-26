@@ -1,17 +1,7 @@
 #include <cmath>
-#include <iostream>
 #include <vector>
 #include <cstdlib>
 #include <ctime>
-#include <fstream>
-#include <sstream>
-#include <filesystem>
-#include <algorithm>
-#include <random>
-
-
-
-
 
 #include "Trainer.h"
 #include "Agent.h"
@@ -41,16 +31,17 @@ typedef vector<vector<double>> Matrix;
 
 
 int main(){
+    TicTacToe game;
     NeuralNetwork nnOne(9, 64, 9);
     NeuralNetwork nnTwo(9, 64, 9);
     
     Agent agentOne(&nnOne, 0.05);
     Agent agentTwo(&nnTwo, 0.05);
-    TicTacToe game;
+
     Trainer trainer(0.9, 0.01);
 
+    int episodes = 500000;
     // Train the agent
-    int episodes = 100000;
     // trainer.trainPolicyGradientTwo(agentOne,agentTwo, game, episodes);
 
     // Save the trained model weights
@@ -60,7 +51,12 @@ int main(){
     
     // trainer.playAgainstAI(nnOne);
     // trainer.playAgainstAI(nnTwo);
-    trainer.playAgainstMinimax();
-
+    // trainer.playAgainstMinimax();
+    map<pair<vector<int>, int>, double> qTable;
+    double epsilon = 0.95;
+    QAgent qAgent(epsilon, qTable);
+    trainer.trainQAgent(qAgent, episodes, 0.3, 0.95);
+    qAgent.saveQTable("Qtable_test.txt");
+    trainer.playAgainstQAgent(qAgent);
     return 0;
 }

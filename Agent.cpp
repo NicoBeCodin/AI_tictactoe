@@ -1,6 +1,213 @@
 #include "Agent.h"
+#include <iostream>
+#include <limits>
+
+vector<double> QAgent::initializeQValues() {
+    return vector<double>(9, 0.0); // Initialize Q-values for all 9 actions to 0
+}
+
+QAgent::QAgent(double epsilon, map<pair<vector<int>, int>, double> qTable): epsilon(epsilon), qTable(qTable) {} ;
+
+
+int QAgent::selectAction(TicTacToe &game) {
+    vector<int> availableActions = game.getAvailableActions();
+    if (availableActions.empty()){
+        cerr<<"No available actions for this state:"<<endl;
+        game.printBoard();
+        return -1;
+    }
+
+    if (((double) rand() / RAND_MAX) < epsilon) {
+        // Exploration: choose a random action
+        return availableActions[rand() % availableActions.size()];
+    }
+
+    // Exploitation: choose the action with the highest Q-value
+    int bestAction = availableActions[0];
+    double maxQ = -std::numeric_limits<double>::infinity();
+    vector<int> state = game.getState();
+    for (int action : availableActions) {
+        auto key = std::make_pair(state, action);
+        double qValue = getQValue(key);
+        if (qValue > maxQ) {
+            maxQ = qValue;
+            bestAction = action;
+        }
+    }
+    cout<<endl;
+    return bestAction;
+}
+
+void QAgent::decreaseEpsilon(double coeff, double lowest){
+    if (epsilon>= lowest){
+        
+    epsilon*=coeff;
+    }
+}
+
+//Only when debugging
+double QAgent::getQValue(std::pair<vector<int>, int> key){
+    auto it = qTable.find(key);
+    if (it != qTable.end()) {
+        // Key exists, return the associated value
+        return it->second;
+    } else {
+        // Key does not exist, return 0
+        return 0.0;
+    }
+}
+
+// void QAgent::updateQValue(vector<int>& state, int action, vector<int>& nextState, vector<int>& nextAvailableActions ,double reward, double alpha, double gamma){
+//     double nextMaxQ = -std::numeric_limits<double>::infinity();
+//     for (int a: nextAvailableActions){
+        
+//         nextMaxQ = std::max(getQValue(std::make_pair(nextState, a)), nextMaxQ);
+//     }
+//     if (nextMaxQ == -std::numeric_limits<double>::infinity()){
+//         cout<<"***nextMaxQ is -inf"<<endl;
+//         cout<<"getQValue result is: "<<endl;
+//         for (int s: nextAvailableActions){
+//             cout<<"action :" << s << "getQValue: " <<getQValue(std::make_pair(nextState, s))<<endl;
+//         }
+//     }
+//     std::pair<vector<int>, int> qKey = std::make_pair(state, action);
+//     double currentQValue = getQValue(qKey);
+//     double newQValue = currentQValue + alpha  * (reward + gamma * nextMaxQ - currentQValue);
+//     // std::cout<<"New Q Value: " << newQValue << std::endl;
+//     if (newQValue == -std::numeric_limits<double>::infinity()){
+//         cout<<"-inf assigned to: " <<endl;
+//         for(int s: state){
+//             cout<<s<<endl;
+//         }
+//         cout<<"action is : "<< action<<endl;
+//     }
+//     qTable[qKey] = newQValue;
+
+// }
+
+void QAgent::updateQValue(std::vector<int>& state, int action, std::vector<int>& nextState,
+                          std::vector<int>& nextAvailableActions, double reward, double alpha, double gamma) {
+    if (nextAvailableActions.empty()) {
+        std::cerr << "Error: No available actions for next state!" << std::endl;
+        return;
+    }
+
+    double nextMaxQ = -std::numeric_limits<double>::infinity();
+    for (int a : nextAvailableActions) {
+        double qValue = getQValue(std::make_pair(nextState, a));
+        nextMaxQ = std::max(nextMaxQ, qValue);
+    }
+
+    if (nextMaxQ == -std::numeric_limits<double>::infinity()) {
+        std::cerr << "Error: nextMaxQ is -inf! Check available actions and state validity." << std::endl;
+        return;
+    }
+
+    std::pair<std::vector<int>, int> qKey = std::make_pair(state, action);
+    double currentQValue = getQValue(qKey);
+    double newQValue = currentQValue + alpha * (reward + gamma * nextMaxQ - currentQValue);
+
+    // Log the Q-value update
+    std::cout << "Updating Q-value for State: [";
+    for (int val : state) std::cout << val << " ";
+    std::cout << "], Action: " << action << ", Reward: " << reward
+              << ", Old Q-Value: " << currentQValue << ", New Q-Value: " << newQValue << std::endl;
+
+    qTable[qKey] = newQValue;
+}
+
+
+
+void QAgent::printFirstFiveQTable() {
+    int count = 0;
+    for (const auto& entry : qTable) {
+        // Print the key (state-action pair) and value (Q-value)
+        const auto& state = entry.first.first; // The vector<int> (state)
+        int action = entry.first.second;       // The int (action)
+        double qValue = entry.second;          // The double (Q-value)
+
+        // Print the state
+        std::cout << "State: [";
+        for (size_t i = 0; i < state.size(); ++i) {
+            std::cout << state[i];
+            if (i < state.size() - 1) std::cout << ", ";
+        }
+        std::cout << "], Action: " << action << ", Q-Value: " << qValue << std::endl;
+
+        // Stop after printing 5 entries
+        if (++count >= 5) break;
+    }
+
+    if (count == 0) {
+        std::cout << "The Q-table is empty!" << std::endl;
+    }
+}
+
+
+void QAgent::saveQTable(const std::string& filename) {
+    std::ofstream outFile(filename, std::ios::out);
+    if (!outFile) {
+        std::cerr << "Error: Could not open file for saving Q-Table." << std::endl;
+        return;
+    }
+
+    for (const auto& entry : qTable) {
+        const auto& state = entry.first.first;
+        int action = entry.first.second;
+        double qValue = entry.second;
+
+        // Write the state, action, and Q-value
+        for (int val : state) {
+            outFile << val << " ";
+        }
+        outFile << action << " " << qValue << std::endl;
+    }
+
+    outFile.close();
+    std::cout << "Q-Table saved to " << filename << std::endl;
+}
+
+void QAgent::loadQTable(const std::string& filename) {
+    std::ifstream inFile(filename, std::ios::in);
+    if (!inFile) {
+        std::cerr << "Error: Could not open file for loading Q-Table." << std::endl;
+        return;
+    }
+
+    qTable.clear(); // Clear the current Q-table before loading
+
+    std::string line;
+    while (std::getline(inFile, line)) {
+        std::istringstream iss(line);
+
+        // Read the state
+        std::vector<int> state(9);
+        for (int i = 0; i < 9; ++i) {
+            iss >> state[i];
+        }
+
+        // Read the action and Q-value
+        int action;
+        double qValue;
+        iss >> action >> qValue;
+
+        // Insert into the Q-table
+        qTable[{state, action}] = qValue;
+    }
+
+    inFile.close();
+    std::cout << "Q-Table loaded from " << filename << std::endl;
+}
+
+
+
+
+
+//Q Learning <ith neural network (maybe too complex for task)
+
 
 Agent::Agent(NeuralNetwork *policyNet, double epsilon) : policyNet(policyNet), epsilon(epsilon) {};
+
 
 int Agent::chooseAction(const Matrix &state, const vector<int> &availableActions)
 {
@@ -47,6 +254,9 @@ void Agent::updateQValues(const Matrix &state, int action, double reward, const 
     // Perform backward propagation to update weights
     (*policyNet).backward(state, qValues);
 }
+
+
+
 
 // Reinforce update training function
 void Agent::trainPolicy_deprecated(const vector<pair<Matrix, int>> &gameHistory, double outcome)
@@ -207,7 +417,7 @@ int Agent::chooseMove(TicTacToe &game)
         prob /= sumProbs;
     }
     int action;
-    if (rand() / RAND_MAX < epsilon)
+    if ((double)rand() / (double)RAND_MAX < epsilon)
     {
         action = randomAction(availableActions);
     }

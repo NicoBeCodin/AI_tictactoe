@@ -2,6 +2,7 @@
     "files.associations": {
         "algorithm": "cpp",
         "functional": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "map": "cpp"
     }
 }

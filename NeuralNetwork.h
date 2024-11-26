@@ -1,8 +1,11 @@
 #ifndef NEURAL_NETWORK_H
 #define NEURAL_NETWORK_H
-
+#include <iostream>
 #include <vector>
 #include <string>
+#include <fstream>
+#include <filesystem>
+#include <sstream>
 
 typedef std::vector<std::vector<double>> Matrix;
 

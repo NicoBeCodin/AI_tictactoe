@@ -8,10 +8,13 @@ This project aims to create an intelligent agent capable of playing Tic-Tac-Toe 
 - **Matrix Operations from Scratch**: All matrix math is manually implemented for learning purposes, without relying on external libraries such as NumPy.
 - **Human vs Agent Gameplay**: A simple interface for humans to play against the agent in a Tic-Tac-Toe game.
 - **Continuous Experimentation**: The project is actively testing different parameters to improve agent performance.
+- **Minmax algorithm**: Currently a succesful approach to play optimally.
+
 
 ## Current Status
 
-The agent is still in development, and while progress has been made, convergence has not yet been achieved. Despite efforts, the Q-Learning and Policy Gradient approaches still show inconsistencies in the agent's performance. As of now, it doesn't yet play optimally or converge to a consistent strategy.
+The agent is still in development, and while progress has been made, convergence has not yet been achieved. Despite efforts, the Q-Learning and Policy Gradient approaches still show inconsistencies in the agent's performance. As of now, it doesn't yet play optimally or converge to a consistent strategy. I've tried policyGradinet but with two different networks facing each other but this doesn't converge.
+The approach is now through a minmax algorith who is effectively bruteforcing it's way to the solution. This could be used in my future code to give reward according to moves.
 
 ## Next Steps
 
