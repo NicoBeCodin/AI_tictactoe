@@ -313,22 +313,22 @@ void Trainer::trainQAgent(QAgent& qAgent, int episodes, double alpha, double gam
             if (result == 1) {
                 reward = 1.0; // Win for the agent
                 //std::cout<<"Win, reward = 1.0\n";
-                qAgent.updateQValue(currentState, action, nextState, nextAvailableActions, reward, alpha, gamma);
+                qAgent.updateQValue(currentState, action, nextState, nextAvailableActions, reward, alpha, gamma, false);
                 break;
             } else if (result == -1) {
                 reward = -1.0; // Loss for the agent
-                qAgent.updateQValue(currentState, action, nextState, nextAvailableActions, reward, alpha, gamma);
+                qAgent.updateQValue(currentState, action, nextState, nextAvailableActions, reward, alpha, gamma, false);
                 //std::cout<<"loss, reward = -1.0\n";
                 break;
             } else if (result == 0) {
                 reward = 0.5; // Draw
-                qAgent.updateQValue(currentState, action, nextState, nextAvailableActions, reward, alpha, gamma);
+                qAgent.updateQValue(currentState, action, nextState, nextAvailableActions, reward, alpha, gamma, false);
                 //std::cout<<"draw, reward = 0.5\n";
                 break;
             }
             else {
                 reward =0.0;
-                qAgent.updateQValue(currentState, action, nextState, nextAvailableActions, reward, alpha, gamma);
+                qAgent.updateQValue(currentState, action, nextState, nextAvailableActions, reward, alpha, gamma, false);
 
             }
             // If the game is not over, compute the next state

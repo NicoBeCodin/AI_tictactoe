@@ -16,6 +16,7 @@ public:
     int chooseMove(TicTacToe &game);
     void trainPolicy(const vector<pair<Matrix, int>>& gameHistory, double outcome);
     void trainPolicy_deprecated(const vector<pair<Matrix, int>>& gameHistory, double outcome);
+    
     void updateQValues(const Matrix& state, int action, double reward, const Matrix &nextState, double gamma, double learningRate);
     
     pair<vector<pair<Matrix,int>>,int> playGame(TicTacToe& game);
@@ -39,7 +40,7 @@ public:
 
     vector<double> initializeQValues();
     int selectAction(TicTacToe &game);
-    void updateQValue(vector<int>& state, int action, vector<int>& nextState, vector<int>& nextAvailableActions, double reward, double alpha, double gamma);
+    void updateQValue(vector<int>& state, int action, vector<int>& nextState, vector<int>& nextAvailableActions, double reward, double alpha, double gamma, bool debug);
     void decreaseEpsilon(double coeff, double lowest);
     void printQTable();
     void printFirstFiveQTable();

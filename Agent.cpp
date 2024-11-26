@@ -57,36 +57,8 @@ double QAgent::getQValue(std::pair<vector<int>, int> key){
     }
 }
 
-// void QAgent::updateQValue(vector<int>& state, int action, vector<int>& nextState, vector<int>& nextAvailableActions ,double reward, double alpha, double gamma){
-//     double nextMaxQ = -std::numeric_limits<double>::infinity();
-//     for (int a: nextAvailableActions){
-        
-//         nextMaxQ = std::max(getQValue(std::make_pair(nextState, a)), nextMaxQ);
-//     }
-//     if (nextMaxQ == -std::numeric_limits<double>::infinity()){
-//         cout<<"***nextMaxQ is -inf"<<endl;
-//         cout<<"getQValue result is: "<<endl;
-//         for (int s: nextAvailableActions){
-//             cout<<"action :" << s << "getQValue: " <<getQValue(std::make_pair(nextState, s))<<endl;
-//         }
-//     }
-//     std::pair<vector<int>, int> qKey = std::make_pair(state, action);
-//     double currentQValue = getQValue(qKey);
-//     double newQValue = currentQValue + alpha  * (reward + gamma * nextMaxQ - currentQValue);
-//     // std::cout<<"New Q Value: " << newQValue << std::endl;
-//     if (newQValue == -std::numeric_limits<double>::infinity()){
-//         cout<<"-inf assigned to: " <<endl;
-//         for(int s: state){
-//             cout<<s<<endl;
-//         }
-//         cout<<"action is : "<< action<<endl;
-//     }
-//     qTable[qKey] = newQValue;
-
-// }
-
 void QAgent::updateQValue(std::vector<int>& state, int action, std::vector<int>& nextState,
-                          std::vector<int>& nextAvailableActions, double reward, double alpha, double gamma) {
+                          std::vector<int>& nextAvailableActions, double reward, double alpha, double gamma, bool debug) {
     if (nextAvailableActions.empty()) {
         std::cerr << "Error: No available actions for next state!" << std::endl;
         return;
@@ -107,11 +79,15 @@ void QAgent::updateQValue(std::vector<int>& state, int action, std::vector<int>&
     double currentQValue = getQValue(qKey);
     double newQValue = currentQValue + alpha * (reward + gamma * nextMaxQ - currentQValue);
 
-    // Log the Q-value update
-    std::cout << "Updating Q-value for State: [";
-    for (int val : state) std::cout << val << " ";
-    std::cout << "], Action: " << action << ", Reward: " << reward
+    // For debug
+
+    if (debug) {
+        std::cout << "Updating Q-value for State: [";
+        for (int val : state) std::cout << val << " ";
+        std::cout << "], Action: " << action << ", Reward: " << reward
               << ", Old Q-Value: " << currentQValue << ", New Q-Value: " << newQValue << std::endl;
+
+    }
 
     qTable[qKey] = newQValue;
 }
@@ -208,7 +184,7 @@ void QAgent::loadQTable(const std::string& filename) {
 
 Agent::Agent(NeuralNetwork *policyNet, double epsilon) : policyNet(policyNet), epsilon(epsilon) {};
 
-
+//This method didn't yield anything satisfying (qLearning w/ NN)
 int Agent::chooseAction(const Matrix &state, const vector<int> &availableActions)
 {
     if ((double)rand() / RAND_MAX < epsilon)
@@ -236,6 +212,7 @@ int Agent::chooseAction(const Matrix &state, const vector<int> &availableActions
 }
 
 // Update the Q-values (reward-based learning with temporal difference update)
+//This medthod didn't yield anything satisfying
 void Agent::updateQValues(const Matrix &state, int action, double reward, const Matrix &nextState, double gamma, double learningRate)
 {
     Matrix qValues = (*policyNet).forward(state);         // Q-values for current state
@@ -254,8 +231,6 @@ void Agent::updateQValues(const Matrix &state, int action, double reward, const 
     // Perform backward propagation to update weights
     (*policyNet).backward(state, qValues);
 }
-
-
 
 
 // Reinforce update training function
