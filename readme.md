@@ -1,7 +1,7 @@
 # TicTacToe Agent: Reinforcement Learning with Q-Learning & Policy Gradient
 
 This project aims to create an intelligent agent capable of playing Tic-Tac-Toe effectively against a human. The agent is built using reinforcement learning techniques, specifically **Q-Learning** and **Policy Gradient**, to learn optimal strategies over time. The project does not rely on any machine learning libraries, and all matrix operations are implemented from scratch to understand the underlying mechanics.
-You can mess around with the different algorithms and their parameters to test out their strengths and (mostly) weaknesses.
+You can mess around with the different algorithms and their parameters to test out their strengths and (mostly) weaknesses.\n
 This project in mainly for me to get to experiment with the algorithms used in machine learning so this could be heavily optimized and feel free to do so.
 
 
