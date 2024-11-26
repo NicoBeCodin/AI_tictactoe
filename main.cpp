@@ -11,24 +11,6 @@
 using namespace std;
 typedef vector<vector<double>> Matrix;
 
-// int main()
-// {
-
-
-
-//     NeuralNetwork nn = neuralNetworkTraining();
-//     nn.saveWeights("weights_2.txt");
-
-//     // NeuralNetwork nn(9,128,9);
-//     // nn.loadWeights("weights_1.txt");
-
-//     cout << "Trying game... " << endl;
-
-//     playAgainstAI(nn);
-
-//     return 0;
-// }
-
 
 int main(){
     TicTacToe game;
@@ -62,7 +44,7 @@ int main(){
     double gamma =0.95; //Discount factor (higher => more long term focused)
     double epsilon = 0.95; //Exploration rate
     double epsilon_min = 0.05; //Lowest exploration rate
-    double epsilon_decay = 0.9999; //Epsilon decay rate
+    double epsilon_decay = 0.999; //Epsilon decay rate
     QAgent qAgent(epsilon, qTable);
 
     trainer.trainQAgent(qAgent, episodes, alpha, gamma, epsilon_decay, epsilon_min);

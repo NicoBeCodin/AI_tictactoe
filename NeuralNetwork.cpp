@@ -70,8 +70,6 @@ void NeuralNetwork::printNetwork()
 
     cout << "weightsInputHidden: \n"
          << endl;
-
-
     
     for (int i = 0; i < inputSize; ++i)
     {
