@@ -66,7 +66,7 @@ int main(){
     QAgent qAgent(epsilon, qTable);
 
     trainer.trainQAgent(qAgent, episodes, alpha, gamma, epsilon_decay, epsilon_min);
-    qAgent.saveQTable("Qtable_test.txt");
+    qAgent.saveQTable("Qtable_1.txt");
     trainer.playAgainstQAgent(qAgent);
     return 0;
 }
